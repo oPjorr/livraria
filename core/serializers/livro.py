@@ -5,3 +5,9 @@ class LivroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Livro
         fields = '__all__'
+        
+class LivroDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Livro
+        fields = "__all__"
+        depth = 1
