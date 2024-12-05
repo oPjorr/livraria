@@ -82,10 +82,4 @@ class LivroAdmin(admin.ModelAdmin):
     ordering = ('titulo', 'editora', 'categoria')
     list_per_page = 25
 
-@admin.register(Compra)
-class CompraAdmin(admin.ModelAdmin):
-    list_display = ("usuario", "total", "status")
-    search_fields = ("usuario", "status")
-    list_filter = ("usuario", "status")
-    ordering = ("usuario", "total", "status")
-    list_per_page = 25
+admin.site.register(Compra)
