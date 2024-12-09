@@ -13,6 +13,8 @@ from core.models import User
 
 PASSAGE_APP_ID = settings.PASSAGE_APP_ID
 PASSAGE_API_KEY = settings.PASSAGE_API_KEY
+print(f"DEBUG: {PASSAGE_API_KEY = }")
+print(f"DEBUG: {PASSAGE_APP_ID = }")
 PASSAGE_AUTH_STRATEGY = settings.PASSAGE_AUTH_STRATEGY
 psg = Passage(PASSAGE_APP_ID, PASSAGE_API_KEY, auth_strategy=PASSAGE_AUTH_STRATEGY)
 
@@ -35,7 +37,8 @@ class TokenAuthentication(authentication.BaseAuthentication):
         if not request.headers.get("Authorization"):
             return None
 
-        psg_user_id: str = self._get_user_id(request)
+        token = request.headers.get("Authorization").split()[1]
+        psg_user_id: str = self._get_user_id(token)
         user: User = self._get_or_create_user(psg_user_id)
 
         return (user, None)
@@ -52,9 +55,9 @@ class TokenAuthentication(authentication.BaseAuthentication):
 
         return user
 
-    def _get_user_id(self, request) -> str:
+    def _get_user_id(self, token) -> str:
         try:
-            psg_user_id: str = psg.authenticateRequest(request)
+            psg_user_id: str = psg.validateJwt(token)
         except PassageError as e:
             # print(e)
             raise AuthenticationFailed(e.message) from e
