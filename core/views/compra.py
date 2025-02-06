@@ -1,12 +1,14 @@
 from rest_framework.viewsets import ModelViewSet
 
 from core.models import Compra
-from core.serializers import CompraSerializer, CompraCreateUpdateSerializer, CompraListSerializer
+from core.serializers import CompraSerializer, CriarEditarCompraSerializer
+from rest_framework.permissions import IsAuthenticated
 
 
 class CompraViewSet(ModelViewSet):
     serializer_class = CompraSerializer
     queryset = Compra.objects.all()
+    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         usuario = self.request.user
