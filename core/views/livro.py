@@ -2,12 +2,17 @@ from rest_framework import viewsets
 from core.models import Livro
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
+from django.db.models.aggregates import Sum
 from core.serializers import LivroDetailSerializer, LivroSerializer, LivroListSerializer, LivroRetrieveSerializer, LivroAlterarPrecoSerializer
 
 class LivroViewSet(viewsets.ModelViewSet):
     queryset = Livro.objects.all()
     serializer_class = LivroSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["categoria__descricao", "editora__nome"]
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -45,3 +50,18 @@ class LivroViewSet(viewsets.ModelViewSet):
         return Response(
             {"status": "Quantidade ajustada com sucesso", "novo_estoque": livro.quantidade}, status=status.HTTP_200_OK
         )
+
+    @action(detail=False, methods=["get"])
+    def mais_vendidos(self, request):
+        livros = Livro.objects.annotate(total_vendidos=Sum("quantidade")).filter(total_vendidos__gt=10)
+
+        data = [
+            {
+                "id": livro.id,
+                "titulo": livro.titulo,
+                "total_vendidos": livro.total_vendidos,
+            }
+            for livro in livros
+        ]
+
+        return Response(data, status=status.HTTP_200_OK)
