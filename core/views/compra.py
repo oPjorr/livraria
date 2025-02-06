@@ -5,6 +5,7 @@ from core.models import Compra
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from core.serializers import CompraSerializer, CriarEditarCompraSerializer
 from datetime import timezone
@@ -14,6 +15,11 @@ from rest_framework.permissions import IsAuthenticated
 class CompraViewSet(ModelViewSet):
     serializer_class = CompraSerializer
     queryset = Compra.objects.all()
+    filter_backends = [DjangoFilterBackend, OrderingFilter, SearchFilter]
+    filterset_fields = ["usuario__email", "status", "data"]
+    search_fields = ["usuario__email"]
+    ordering_fields = ["usuario__email", "status", "data"]
+    ordering = ["-data"]
     # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
