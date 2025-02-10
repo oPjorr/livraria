@@ -4,3 +4,4 @@ from .editora import EditoraSerializer
 from .autor import AutorSerializer
 from .livro import LivroListSerializer, LivroRetrieveSerializer, LivroSerializer, LivroDetailSerializer, LivroAlterarPrecoSerializer, LivroAjustarEstoqueSerializer
 from .compra import CompraSerializer, CriarEditarCompraSerializer, ItensCompraSerializer
+from .favorito import FavoritoSerializer
